@@ -1,5 +1,4 @@
 #include <iostream>
-#include <vector>
 using namespace std;
 
 template <class T>
@@ -119,14 +118,14 @@ template <class T>
 void insert(T data, int pos){
     int n = CircularArray<T>::size();
     if(pos < 0 || pos > n) throw "ERROR: Index out of range";
-    if(n == CircularArray<T>::capacity) throw "WARNING: The array is full";        
+    if(n == CircularArray<T>::capacity) throw "WARNING: The array is full";
     if(pos == 0)
         push_front(data);
     else {
         for (int i = n - 1; i >= pos; i--)
-            (*this)[i+1] = (*this)[i];
-        (*this)[pos] = data;
-        back = next(back);
+            CircularArray<T>::array[i+1] = CircularArray<T>::array[i];
+        CircularArray<T>::array[pos] = data;
+        CircularArray<T>::back = next(CircularArray<T>::back);
     }
 }
 
@@ -140,9 +139,11 @@ T& CircularArray<T>::operator[](int pos)
 template <class T>
 bool CircularArray<T>::is_sorted()
 {
-    for(int i = 0; i<capacity; i++) {
-        if(array[i] < array[i++]) return false;
-    }
+    if (size() == 0) throw "ERROR: The array is empty";
+    int n = size();
+    for (int i = 1; i < n; i++)
+        if (array[i - 1] > array[i])
+            return false;
     return true;
 }
 
@@ -151,26 +152,34 @@ void CircularArray<T>::sort()
 {
     int tmp, pass = 0;
     if(is_sorted()) throw "WARNING: Was sorted";
-    else
-    {
-        for(int i = 0; i<capacity; i++) {
-            for(int j = i+1; j<capacity; j++)
-            {
-                if(array[j] < array[i]) {
-                    tmp = array[i];
-                    array[i] = array[j];
-                    array[j] = tmp;
-                }
+    for(int i = 0; i<size(); i++) {
+        for(int j = i+1; j<size(); j++)
+        {
+            if(array[j] < array[i]) { 
+                tmp = array[i];
+                array[i] = array[j];
+                array[j] = tmp;
             }
-            pass++;
         }
+        pass++;
     }
 }
 
 template <class T>
 void CircularArray<T>::reverse()
 {
-    int a = 0;
+    int tmp, pass = 0;
+    for(int i = 0; i<size(); i++) {
+        for(int j = i+1; j<size(); j++)
+        {
+            if(array[j] > array[i]) { 
+                tmp = array[i];
+                array[i] = array[j];
+                array[j] = tmp;
+            }
+        }
+        pass++;
+    }
 }
 
 template <class T>
@@ -191,5 +200,10 @@ string CircularArray<T>::to_string(string sep)
     string result = ""; 
     for (int i = 0; i < size(); i++)
         result += std::to_string((*this)[i]) + sep;
-    return result;    
+    for (int i = 0; i < capacity; i++)
+    {
+        cout << array[i] << " ";
+    }
+    cout << " "<< endl;
+    return result;
 }
