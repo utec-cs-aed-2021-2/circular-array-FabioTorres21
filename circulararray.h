@@ -64,6 +64,7 @@ void CircularArray<T>::push_front(T data){
 template <class T>
 void CircularArray<T>::push_back(T data){
     if(is_full()) throw "WARNING: The array is full";
+    /*ACL: Se puede implementar resizing*/
     if(is_empty()) front = back = 0;
     else back = next(back);
     array[back] = data;
@@ -200,6 +201,7 @@ string CircularArray<T>::to_string(string sep)
     string result = ""; 
     for (int i = 0; i < size(); i++)
         result += std::to_string((*this)[i]) + sep;
+        /*ACL: array[i]*/
     for (int i = 0; i < capacity; i++)
     {
         cout << array[i] << " ";
